@@ -1,0 +1,6 @@
+services:
+  deletos:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+  
