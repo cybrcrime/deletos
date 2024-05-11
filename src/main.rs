@@ -28,10 +28,13 @@ impl Handler {
             return Ok(());
         }
         if msg.mentions.iter().any(|x| x.id == idx) {
+            let reply = msg.reply(&ctx.http, "wait...").await.map_err(wipe_err)?;
             let urls = msg
                 .embeds
                 .iter()
+                .map(|x| dbg!(x))
                 .flat_map(|e| e.url.clone())
+                .map(|x| dbg!(x))
                 .enumerate()
                 .map(|(idx, url)| (url, format!("/tmp/{}-{}.mp4", msg.id, idx)))
                 .map(|x| dbg!(x))
@@ -55,13 +58,14 @@ impl Handler {
                 };
             }
             if results.len() == 0 {
+                dbg!(reply.delete(&ctx.http).await.map_err(wipe_err).is_ok());
                 let x = msg
                     .reply(&ctx.http, "Could not download anything..mb")
                     .await
                     .is_err();
                 dbg!(x);
             }
-            let reply = msg.reply(&ctx.http, "wait...").await.map_err(wipe_err)?;
+
             reply.delete(&ctx.http).await.map_err(wipe_err)?;
             let reply = CreateMessage::new()
                 .add_files(results)
