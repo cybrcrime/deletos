@@ -64,6 +64,7 @@ impl Handler {
                     .await
                     .is_err();
                 dbg!(x);
+                return Ok(())
             }
 
             reply.delete(&ctx.http).await.map_err(wipe_err)?;
