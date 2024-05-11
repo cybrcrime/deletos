@@ -12,18 +12,16 @@ mod yt_dlp;
 struct Handler;
 
 fn wipe_err<T: Debug>(x: T) -> () {
-    println!("Silent error:");
+    println!("error:");
     dbg!(x);
     ()
 }
 impl Handler {
     async fn handle_message(&self, ctx: Context, msg: Message) -> Result<(), ()> {
-        let idx;
-
-        {
+        let idx = {
             let me = ctx.cache.current_user();
-            idx = me.id;
-        }
+            me.id
+        };
         if msg.author.id == idx {
             return Ok(());
         }
@@ -52,9 +50,8 @@ impl Handler {
 
             for res in urls {
                 let res = res.await;
-                match res {
-                    Ok(Ok(x)) => results.push(x),
-                    _ => (),
+                if let Ok(Ok(x)) = res {
+                    results.push(x)
                 };
             }
             if results.len() == 0 {
@@ -64,7 +61,7 @@ impl Handler {
                     .await
                     .is_err();
                 dbg!(x);
-                return Ok(())
+                return Ok(());
             }
 
             reply.delete(&ctx.http).await.map_err(wipe_err)?;
