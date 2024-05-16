@@ -22,7 +22,7 @@ impl Handler {
             let me = ctx.cache.current_user();
             me.id
         };
-        if msg.author.id == idx {
+        if msg.author.id == idx || msg.embeds.len() == 0 {
             return Ok(());
         }
         if msg.mentions.iter().any(|x| x.id == idx) {
@@ -37,7 +37,7 @@ impl Handler {
                 .map(|(idx, url)| (url, format!("/tmp/{}-{}.mp4", msg.id, idx)))
                 .map(|x| dbg!(x))
                 .map(|(url, path)| {
-		    println!("Downloading {url} to {path}");
+                    println!("Downloading {url} to {path}");
                     tokio::spawn(yt_dlp(url, path).then(|x| async {
                         let x = x.map_err(wipe_err)?;
                         let attachment =
