@@ -23,6 +23,7 @@ impl Handler {
             me.id
         };
         if msg.author.id == idx || msg.embeds.len() == 0 {
+            println!("Skipping, no embeds and/or self ping(?)");
             return Ok(());
         }
         if msg.mentions.iter().any(|x| x.id == idx) {
