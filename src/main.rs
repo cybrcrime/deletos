@@ -39,6 +39,7 @@ impl Handler {
                 .map(|(idx, url)| (url, format!("/tmp/{}-{}.mp4", msg.id, idx)))
                 .map(|x| dbg!(x))
                 .map(|(url, path)| {
+		    println!("Downloading {url} to {path}");
                     tokio::spawn(yt_dlp(url, path).then(|x| async {
                         let x = x.map_err(wipe_err)?;
                         let attachment =
