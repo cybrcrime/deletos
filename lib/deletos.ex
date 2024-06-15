@@ -4,6 +4,8 @@ defmodule Deletos.Bot do
   alias Nostrum.Api
   alias Nostrum.Struct.Embed
 
+  @harmya_id 730844301608615946
+
   def handle_event({:READY, ready, _}) do
     self_id = ready.user.id
     {:ok, _} = Agent.start_link(fn -> self_id end, name: :self_id)
@@ -23,6 +25,13 @@ defmodule Deletos.Bot do
             Api.create_message(msg.channel_id, "Not ok (embed #{i})")
         end
       end
+    end
+  end
+
+  def handle_event({:GUILD_MEMBER_UPDATE, {guild_id, old_user, new_user}, _}) do
+    if old_user.user_id == @harmya_id && new_user.nick != "racist" do
+      Api.modify_guild_member(guild_id, @harmya_id, nick: "racist", reason: "racist")
+      |> IO.inspect()
     end
   end
 
